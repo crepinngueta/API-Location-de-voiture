@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
+from django.utils import timezone
 
 # Custom User Manager
 class UserManager(BaseUserManager):
@@ -116,3 +117,37 @@ class Vehicle(models.Model):
 
     def __str__(self):
         return f"{self.make} {self.model} ({self.year})"
+
+
+
+class Reservation(models.Model):
+    STATUS_CHOICES = [
+    ('en_attente', 'En attente'),
+    ('confirmé', 'Confirmé'),
+    ('annulé', 'Annulé'),
+    ('terminé', 'Terminé'),
+    ]
+
+    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_name='reservations')
+    client = models.ForeignKey(User, on_delete=models.CASCADE, related_name='client_reservations')
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    reservation_date = models.DateTimeField(default=timezone.now)
+    total_cost = models.DecimalField(max_digits=10, decimal_places=2)
+    delivery_location = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True, blank=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Reservation {self.id} for {self.vehicle}"
+
+
+class Payment(models.Model):
+    reservation = models.OneToOneField(Reservation, on_delete=models.CASCADE, related_name='payment')
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_date = models.DateTimeField(default=timezone.now)
+    payment_method = models.CharField(max_length=50, choices=[('stripe', 'Stripe'), ('paypal', 'PayPal')])
+
+    def __str__(self):
+        return f"Payment for reservation {self.reservation}"

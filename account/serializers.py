@@ -178,6 +178,69 @@ class AllVehiclesSerializer(serializers.ModelSerializer):
         fields = '__all__'  # Inclut tous les champs du modèle Vehicle
         
         
-        
 
-        
+
+
+from rest_framework import serializers
+from .models import Reservation, Payment
+
+class PaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = ['id', 'reservation', 'amount', 'payment_date', 'payment_method']
+
+    def create(self, validated_data):
+        # Si la réservation est passée en tant qu'objet, nous utilisons l'ID
+        reservation = validated_data.pop('reservation', None)
+        if isinstance(reservation, Reservation):
+            validated_data['reservation'] = reservation
+
+        payment = Payment.objects.create(**validated_data)
+        return payment
+
+class ReservationSerializer(serializers.ModelSerializer):
+    payment = PaymentSerializer(required=False)
+
+    class Meta:
+        model = Reservation
+        fields = ['id', 'vehicle', 'start_date', 'end_date', 'reservation_date',
+                  'total_cost', 'delivery_location', 'status', 'created_at', 'updated_at', 'payment']
+
+    def create(self, validated_data):
+        request = self.context.get('request')
+        validated_data['client'] = request.user  # Associer le client à l'utilisateur actuellement connecté
+        payment_data = validated_data.pop('payment', None)
+        reservation = Reservation.objects.create(**validated_data)
+        if payment_data:
+            Payment.objects.create(reservation=reservation, **payment_data)
+        return reservation
+
+    def update(self, instance, validated_data):
+        payment_data = validated_data.pop('payment', None)
+        instance.vehicle = validated_data.get('vehicle', instance.vehicle)
+        instance.start_date = validated_data.get('start_date', instance.start_date)
+        instance.end_date = validated_data.get('end_date', instance.end_date)
+        instance.reservation_date = validated_data.get('reservation_date', instance.reservation_date)
+        instance.total_cost = validated_data.get('total_cost', instance.total_cost)
+        instance.delivery_location = validated_data.get('delivery_location', instance.delivery_location)
+        instance.status = validated_data.get('status', instance.status)
+        instance.save()
+
+        if payment_data:
+            payment = instance.payment
+            payment.amount = payment_data.get('amount', payment.amount)
+            payment.payment_date = payment_data.get('payment_date', payment.payment_date)
+            payment.payment_method = payment_data.get('payment_method', payment.payment_method)
+            payment.save()
+
+        return instance
+
+
+from rest_framework import serializers
+from .models import Reservation
+
+class ReservationSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Reservation
+        fields = '__all__'
+

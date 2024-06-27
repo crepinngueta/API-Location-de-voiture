@@ -1,36 +1,32 @@
+## Application de location de voiture sans chauffeur
 
-# Authentication API with Django Rest Framework and Simple JWT
+Ce projet est une API d'authentification construite avec Django Rest Framework et Simple JWT. Elle comprend des fonctionnalités telles que l'inscription d'utilisateurs, la connexion avec un modèle utilisateur personnalisé, le changement de mot de passe et la réinitialisation du mot de passe par e-mail. L'API utilise Simple JWT pour l'authentification par token.
 
-This project is an Authentication API built with Django Rest Framework and Simple JWT. It includes features such as user registration, custom user model login, password change, and password reset through email. The API uses Simple JWT for token authentication.
-## Features
+## Fonctionnalités
 
-- Custom User registration
-- Custom user model login
-- Password change for authenticated users
-- Password reset through email
-- Simple JWT token authentication
+- Inscription d'utilisateur avec modèle utilisateur personnalisé
+- Connexion d'utilisateur avec modèle utilisateur personnalisé
+- Changement de mot de passe pour les utilisateurs authentifiés
+- Réinitialisation du mot de passe par e-mail
+- Authentification par token Simple JWT
 
+## Référence de l'API
 
-## API Reference
+| URL                                      | Méthode | Description                                |
+| ---------------------------------------- | ------- | ------------------------------------------ |
+| `api/user/register/`                     | `POST`  | **Enregistrer un nouvel utilisateur**      |
+| `api/user/login/`                        | `POST`  | **Connexion de l'utilisateur avec des identifiants valides et un jeton d'authentification** |
+| `api/user/profile/`                      | `GET`   | **Affiche la page de profil de l'utilisateur** |
+| `api/user/changepassword/`               | `POST`  | **Changer le mot de passe de l'utilisateur** |
+| `api/user/send-reset-password-email/`    | `POST`  | **Envoyer l'e-mail de réinitialisation du mot de passe** |
+| `api/user/reset-password/<uidb64>/<token>/` | `POST` | **URL pour le changement de mot de passe** |
 
+## Autres fonctionnalités à implémenter
 
-| URL | Method    | Description                |
-| :-------- | :------- | :------------------------- |
-| `api/user/register/` | `POST` | **Register a new user** 
-| `api/user/login/`      | `POST` | **User login with a proper credentials and authentication token** |
-| `api/user/profile/`      | `GET` | **Displays profile page** |
-| `api/user/changepassword/`      | `POST` | **Changes User password** |
-| `api/user/send-reset-password-email/`      | `POST` | **Sends the reset password email** |
-| `api/user/reset-password/<uidb64>/<token>/`      | `POST` | **url for the changing the password** |
-
-
-
-
-
-
-
-
-## Contributing
-
-Contributions are welcome. Please fork the repository and create a new branch for your feature or bug fix. Once you have made your changes, submit a pull request and your changes will be reviewed.
-
+- Ajout de véhicule à la location
+- Modification d'un véhicule
+- Suppression d'un véhicule
+- Affichage de tous les véhicules (peu importe le propriétaire, mais l'utilisateur doit être connecté)
+- Affichage des détails d'un véhicule
+- Gestion des réservations de véhicules
+- Gestion des paiements pour les réservations

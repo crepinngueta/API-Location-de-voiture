@@ -1,5 +1,5 @@
 from django.urls import path,include
-from account.views import AddLocationView, AddVehicleView, AllVehiclesListView, DeleteVehicleView, UpdateLocationView, UpdateVehicleView, UserProfileUpdateView, UserRegistrationView,UserLoginView,UserProfileView,UserChangePasswordView,SendPasswordResetEmailView,UserPasswordResetView, UserVehiclesListAPIView, VehicleDetailView
+from account.views import AddLocationView, AddVehicleView, AllVehiclesListView, DeleteVehicleView, PaymentCreateView, ReservationView, UpdateLocationView, UpdateVehicleView, UserProfileUpdateView, UserRegistrationView,UserLoginView,UserProfileView,UserChangePasswordView,SendPasswordResetEmailView,UserPasswordResetView, UserReservationsView, UserVehiclesListAPIView, VehicleDetailView
 
 urlpatterns = [
     path('register/',UserRegistrationView.as_view(),name="register"),
@@ -15,6 +15,9 @@ urlpatterns = [
     path('vehicles/', UserVehiclesListAPIView.as_view(), name='user-vehicles-list'),
     path('vehicle-details/<int:pk>/', VehicleDetailView.as_view(), name='vehicle-detail'),
     path('all-vehicles/', AllVehiclesListView.as_view(), name='all-vehicles'),
+    path('reserve-vehicle/', ReservationView.as_view(), name='reserve-vehicle'),
+    path('payment/', PaymentCreateView.as_view(), name='payment-create'),
+    path('my-reservations/', UserReservationsView.as_view(), name='user-reservations'),
     path('send-reset-password-email/', SendPasswordResetEmailView.as_view(), name='send-reset-password-email'),
     path('reset-password/<uid>/<token>/', UserPasswordResetView.as_view(), name='reset-password'),
 ]

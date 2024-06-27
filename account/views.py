@@ -2,8 +2,8 @@ from django.http import Http404
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
-from account.models import Location, Vehicle
-from account.serializers import AllVehiclesSerializer, LocationSerializer, LocationUpdateSerializer, UserProfileUpdateSerializer, UserRegistrationSerializer,UserLoginSerializer,UserProfileSerializer,UserChangePasswordSerializer,SendPasswordResetEmailSerializer,UserPasswordResetSerializer, UserVehiclesSerializer, VehicleDetailSerializer, VehicleSerializer, VehicleUpdateSerializer
+from account.models import Location, Payment, Reservation, Vehicle
+from account.serializers import AllVehiclesSerializer, LocationSerializer, LocationUpdateSerializer, PaymentSerializer, ReservationSerializer, ReservationSerializers, UserProfileUpdateSerializer, UserRegistrationSerializer,UserLoginSerializer,UserProfileSerializer,UserChangePasswordSerializer,SendPasswordResetEmailSerializer,UserPasswordResetSerializer, UserVehiclesSerializer, VehicleDetailSerializer, VehicleSerializer, VehicleUpdateSerializer
 from account.renderers import UserRenderer
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -196,3 +196,68 @@ class AllVehiclesListView(generics.ListAPIView):
     queryset = Vehicle.objects.all()
     serializer_class = AllVehiclesSerializer
     permission_classes = [permissions.IsAuthenticated]
+    
+    
+    
+class ReservationView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        serializer = ReservationSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'msg': 'Réservation créée avec succès'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+      
+      
+      
+class PaymentCreateView(generics.CreateAPIView):
+    queryset = Payment.objects.all()
+    serializer_class = PaymentSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        # Récupérer l'utilisateur actuellement connecté
+        user = request.user
+
+        # Récupérer les données de la requête
+        data = request.data
+
+        # Imprimer les données reçues pour le débogage
+        print("Données de la requête:", data)
+
+        # Vérifier que la clé 'reservation' est présente dans les données de la requête
+        if 'reservation' not in data:
+            return Response({"error": "La clé 'reservation' est manquante."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Vérifier que la réservation existe et que l'utilisateur est le client de la réservation
+        try:
+            reservation = Reservation.objects.get(id=data['reservation'], client=user)
+        except Reservation.DoesNotExist:
+            return Response({"error": "Réservation non trouvée ou vous n'êtes pas le client de cette réservation."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Utiliser le montant total de la réservation pour le paiement
+        payment_data = {
+            'reservation': reservation.id,
+            'amount': reservation.total_cost,
+            'payment_method': data.get('payment_method')
+        }
+
+        # Créer le paiement
+        serializer = self.get_serializer(data=payment_data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(reservation=reservation)  # Lier la réservation au paiement
+
+        return Response({"msg": "Paiement réussi"}, status=status.HTTP_201_CREATED)
+      
+
+
+class UserReservationsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        reservations = Reservation.objects.filter(client=user)
+        serializer = ReservationSerializers(reservations, many=True)
+        return Response(serializer.data)
+      
