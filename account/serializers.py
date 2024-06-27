@@ -146,4 +146,38 @@ class LocationUpdateSerializer(serializers.ModelSerializer):
 class VehicleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vehicle
+        fields = ['id', 'make', 'model', 'year', 'vin', 'kilometers', 'color', 'seats',
+                  'location_id', 'available_from', 'available_to', 'price_per_day', 'is_available',
+                  'photo_1', 'photo_2', 'photo_3', 'photo_4', 'created_at', 'updated_at']
+        
+
+
+class VehicleUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Vehicle
+        fields = ['make', 'model', 'year', 'vin', 'kilometers', 'color', 'seats', 'location_id', 'available_from', 'available_to', 'price_per_day', 'is_available', 'photo_1', 'photo_2', 'photo_3', 'photo_4']
+        
+        
+        
+class UserVehiclesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Vehicle
         fields = '__all__'
+        
+        
+        
+class VehicleDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Vehicle
+        fields = '__all__' 
+        
+        
+class AllVehiclesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Vehicle
+        fields = '__all__'  # Inclut tous les champs du modèle Vehicle
+        
+        
+        
+
+        
