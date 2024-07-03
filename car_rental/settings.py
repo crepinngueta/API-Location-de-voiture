@@ -26,7 +26,8 @@ SECRET_KEY = 'django-insecure-*u&t2fgq01-89d^frp0(1nos535d3fc9&d#hd^0v5kbq=tgyky
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.1.69']
+
 
 
 # Application definition
@@ -182,8 +183,10 @@ SIMPLE_JWT = {
 }
 
 CORS_ALLOWED_ORIGINS = [
+    "http://192.168.1.69:_8000",
     "http://localhost:8080",
     "http://127.0.0.1:9000",
+    "http://localhost:3000",
 ]
 
 PASSWORD_RESET_TIMEOUT = 900
