@@ -1,5 +1,7 @@
 from django.urls import path,include
 from account.views import VehicleListByTypeView, AddLocationView, AddVehicleView, AllVehiclesListView, DeleteVehicleView, PaymentCreateView, ReservationView, UpdateLocationView, UpdateVehicleView, UserProfileUpdateView, UserRegistrationView,UserLoginView,UserProfileView,UserChangePasswordView,SendPasswordResetEmailView,UserPasswordResetView, UserReservationsView, UserVehiclesListAPIView, VehicleDetailView
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('register/',UserRegistrationView.as_view(),name="register"),
@@ -22,3 +24,6 @@ urlpatterns = [
     path('send-reset-password-email/', SendPasswordResetEmailView.as_view(), name='send-reset-password-email'),
     path('reset-password/<uid>/<token>/', UserPasswordResetView.as_view(), name='reset-password'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
