@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from account.models import Location, Payment, Reservation, Vehicle
-from account.serializers import AllVehiclesSerializer, LocationSerializer, LocationUpdateSerializer, PaymentSerializer, ReservationSerializer, ReservationSerializers, UserProfileUpdateSerializer, UserRegistrationSerializer,UserLoginSerializer,UserProfileSerializer,UserChangePasswordSerializer,SendPasswordResetEmailSerializer,UserPasswordResetSerializer, UserVehiclesSerializer, VehicleDetailSerializer, VehicleSerializer, VehicleUpdateSerializer
+from account.serializers import AllVehiclesSerializer, LocationSerializer, LocationUpdateSerializer, PaymentSerializer, ReservationSerializer, ReservationSerializers, UserProfileUpdateSerializer, UserRegistrationSerializer,UserLoginSerializer,UserProfileSerializer,UserChangePasswordSerializer,SendPasswordResetEmailSerializer,UserPasswordResetSerializer, UserVehiclesSerializer, VehicleDetailSerializer, VehicleSerializer, VehicleUpdateSerializer, VehicleTypeSerializer
 from account.renderers import UserRenderer
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -44,11 +44,12 @@ class UserLoginView(APIView):
     
 
 class UserProfileView(APIView):
-  renderer_classes = [UserRenderer]
-  permission_classes = [IsAuthenticated]
-  def get(self, request, format=None):
-    serializer = UserProfileSerializer(request.user)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    renderer_classes = [UserRenderer]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        serializer = UserProfileSerializer(request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
   
 class UserChangePasswordView(APIView):
   renderer_classes = [UserRenderer]
@@ -261,3 +262,11 @@ class UserReservationsView(APIView):
         serializer = ReservationSerializers(reservations, many=True)
         return Response(serializer.data)
       
+      
+      
+class VehicleListByTypeView(generics.ListAPIView):
+    serializer_class = VehicleTypeSerializer
+
+    def get_queryset(self):
+        vehicle_type = self.kwargs['vehicle_type']
+        return Vehicle.objects.filter(vehicle_type=vehicle_type)

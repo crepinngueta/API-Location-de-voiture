@@ -37,7 +37,7 @@ class UserLoginSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'email', 'name']
+        fields = '__all__'
 
 class UserChangePasswordSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=255, style={'input_type':'password'}, write_only=True)
@@ -244,3 +244,9 @@ class ReservationSerializers(serializers.ModelSerializer):
         model = Reservation
         fields = '__all__'
 
+
+
+class VehicleTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Vehicle
+        fields = ['id', 'name', 'vehicle_type']

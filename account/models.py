@@ -95,6 +95,11 @@ class Location(models.Model):
 
 
 class Vehicle(models.Model):
+    VEHICLE_TYPE_CHOICES = [
+        ('car', 'Voiture'),
+        ('truck', 'Gros porteur'),
+    ]
+    vehicle_type = models.CharField(max_length=5, choices=VEHICLE_TYPE_CHOICES)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     make = models.CharField(max_length=50)
     model = models.CharField(max_length=50)

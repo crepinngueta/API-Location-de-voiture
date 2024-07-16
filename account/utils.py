@@ -11,3 +11,4 @@ class Util:
       to=[data['to_email']]
     )
     email.send()
+    
